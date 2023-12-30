@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  mysql-db:
+    image: dinhtri21/mysql-sneaker-store:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: thewings21092003
+      MYSQL_DATABASE: sneakerstore
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  express-app:
+    image: dinhtri21/express-sneaker-store:latest
+    depends_on:
+      - mysql-db
+    environment:
+      DB_HOST: mysql-db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: thewings21092003
+      DB_DATABASE: sneakerstore
+    ports:
+      - "3001:3001"
+    command: ["sh", "-c", "sleep 20 && node app.js"]
+
+  react-app:
+    image: dinhtri21/my-react-app:latest
+    depends_on:
+      - express-app
+    environment:
+      REACT_APP_API_URL: http://express-app:3001
+    ports:
+      - "3000:3000"
