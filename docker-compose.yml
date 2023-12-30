@@ -26,7 +26,7 @@ services:
     command: ["sh", "-c", "sleep 20 && node app.js"]
 
   react-app:
-    image: dinhtri21/my-react-app:latest
+    image: dinhtri21/reactjs-sneaker-store:latest
     depends_on:
       - express-app
     environment:
