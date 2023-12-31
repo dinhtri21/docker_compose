@@ -2,6 +2,7 @@ version: '3'
 
 services:
   mysql-db:
+    container_name: mysql-db
     image: dinhtri21/mysql-sneaker-store:latest
     environment:
       MYSQL_ROOT_PASSWORD: thewings21092003
@@ -9,9 +10,21 @@ services:
     volumes:
       - ./data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
+    networks:
+      - backend
+    restart: always
+    # healthcheck:
+    #   test: ["CMD", "curl", "--fail", "http://mysql-db:3306"]
+    #   interval: 5s
+    #   timeout: 10s
+    #   retries: 5
+    # command: ["mysqld"]
+    command: ["bash", "-c", "sleep 1 && mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"]
+
 
   express-app:
+    container_name: express-app
     image: dinhtri21/express-sneaker-store:latest
     depends_on:
       - mysql-db
@@ -21,15 +34,51 @@ services:
       DB_USER: root
       DB_PASSWORD: thewings21092003
       DB_DATABASE: sneakerstore
+      # cors 
+      REACT_CORD: localhost:3000
+      # url cho ảnh
+      BASE_URL: localhost:3002
     ports:
-      - "3001:3001"
-    command: ["sh", "-c", "sleep 20 && node app.js"]
+      - "3002:3001"
+    networks:
+      - backend
+    links:
+      - mysql-db
+    restart: always
+    # healthcheck:
+    #   test: ["CMD", "curl", "--fail", "http://mysql-db:3306"]
+    #   interval: 5s
+    #   timeout: 10s
+    #   retries: 5
+    # command: ["npm", "start"]
+    command: >
+      sh -c 'sleep 3 && npm start'
+
 
   react-app:
+    container_name: react-app
     image: dinhtri21/reactjs-sneaker-store:latest
     depends_on:
       - express-app
     environment:
-      REACT_APP_API_URL: http://express-app:3001
+       REACT_APP_API_URL: localhost:3002
+      #  thành localhost 3002
     ports:
       - "3000:3000"
+    networks:
+      - backend
+    links:
+      - express-app
+    restart: always
+    # healthcheck:
+    #   test: ["CMD", "curl", "--fail", "http://express-app:3002/health"]
+    #   interval: 5s
+    #   timeout: 10s
+    #   retries: 5
+    # command: ["npm", "start"]
+    command: >
+      sh -c 'sleep 6 && npm start'
+
+networks:
+  backend:
+    driver: bridge
