@@ -8,7 +8,7 @@ services:
       MYSQL_ROOT_PASSWORD: thewings21092003
       MYSQL_DATABASE: sneakerstore
     volumes:
-      - ./data:/var/lib/mysql
+      - ./data:/var/lib/mysql:rw
     ports:
       - "3307:3306"
     networks:
