@@ -4,8 +4,8 @@ services:
   mysql-db:
     container_name: mysql-db
     image: nhommtl/mysql1-sneaker-store:latest
-    # volumes:
-    #   - ./data:/var/lib/mysql:rw
+    volumes:
+      - ./data:/var/lib/mysql:rw
     ports:
       - "3307:3306"
     networks:
