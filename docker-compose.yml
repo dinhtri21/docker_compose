@@ -3,82 +3,55 @@ version: '3'
 services:
   mysql-db:
     container_name: mysql-db
-    image: dinhtri21/mysql-sneaker-store:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: thewings21092003
-      MYSQL_DATABASE: sneakerstore
-    volumes:
-      - ./data:/var/lib/mysql:rw
+    image: nhommtl/mysql1-sneaker-store:latest
+    # volumes:
+    #   - ./data:/var/lib/mysql:rw
     ports:
       - "3307:3306"
     networks:
       - backend
     restart: always
-    # healthcheck:
-    #   test: ["CMD", "curl", "--fail", "http://mysql-db:3306"]
-    #   interval: 5s
-    #   timeout: 10s
-    #   retries: 5
-    # command: ["mysqld"]
-    command: ["bash", "-c", "sleep 1 && mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"]
-
+    command: ["mysqld"]
 
   express-app:
     container_name: express-app
-    image: dinhtri21/express-sneaker-store:latest
+    image: nhommtl/express1-sneaker-store:latest
     depends_on:
       - mysql-db
     environment:
       DB_HOST: mysql-db
       DB_PORT: 3306
       DB_USER: root
-      DB_PASSWORD: thewings21092003
+      DB_PASSWORD: abc123
       DB_DATABASE: sneakerstore
-      # cors 
-      REACT_CORD: localhost:3000
-      # url cho ảnh
-      BASE_URL: localhost:3002
+      BASE_URL: localhost:3001
+      LOCAL_HOST: localhost
+      REACT_CORS: localhost:3000
     ports:
-      - "3002:3001"
+      - "3001:3001"
     networks:
       - backend
-    links:
-      - mysql-db
     restart: always
-    # healthcheck:
-    #   test: ["CMD", "curl", "--fail", "http://mysql-db:3306"]
-    #   interval: 5s
-    #   timeout: 10s
-    #   retries: 5
-    # command: ["npm", "start"]
-    command: >
-      sh -c 'sleep 3 && npm start'
-
-
+    command: ["sh", "-c", "sleep 55 && npm start"]
   react-app:
     container_name: react-app
-    image: dinhtri21/reactjs-sneaker-store:latest
+    image: nhommtl/reactjs-sneaker-store:latest
     depends_on:
       - express-app
     environment:
-       REACT_APP_API_URL: localhost:3002
-      #  thành localhost 3002
+      REACT_APP_API_URL: localhost
+      REACT_APP_API_PORT: 3001
     ports:
       - "3000:3000"
     networks:
       - backend
-    links:
-      - express-app
+      # - frontent
     restart: always
-    # healthcheck:
-    #   test: ["CMD", "curl", "--fail", "http://express-app:3002/health"]
-    #   interval: 5s
-    #   timeout: 10s
-    #   retries: 5
-    # command: ["npm", "start"]
-    command: >
-      sh -c 'sleep 6 && npm start'
+    command: ["sh", "-c", "sleep 60 && npm start"]
+  
 
 networks:
   backend:
     driver: bridge
+  frontend: 
+
