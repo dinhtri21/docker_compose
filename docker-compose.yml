@@ -24,34 +24,32 @@ services:
       DB_USER: root
       DB_PASSWORD: abc123
       DB_DATABASE: sneakerstore
-      BASE_URL: localhost:3001
-      LOCAL_HOST: localhost
-      REACT_CORS: localhost:3000
+      BASE_URL: $localhost:3001
+      LOCAL_HOST: $localhost
+      REACT_CORS: $localhost:3000
     ports:
       - "3001:3001"
     networks:
       - backend
     restart: always
-    command: ["sh", "-c", "sleep 55 && npm start"]
+    command: ["sh", "-c", "sleep 50 && npm start"]
   react-app:
     container_name: react-app
     image: nhommtl/reactjs-sneaker-store:latest
     depends_on:
       - express-app
     environment:
-      REACT_APP_API_URL: localhost
-      REACT_APP_API_PORT: 3001
+      REACT_APP_API_URL: $localhost:3001
     ports:
       - "3000:3000"
     networks:
       - backend
       # - frontent
     restart: always
-    command: ["sh", "-c", "sleep 60 && npm start"]
-  
+    command: ["sh", "-c", "sleep 55 && npm start"]
+
 
 networks:
   backend:
     driver: bridge
-  frontend: 
-
+  frontend:
